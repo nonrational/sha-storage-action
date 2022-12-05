@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "jest",
-    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt"
+    "test": "jest"
   },
   "author": "",
   "license": "MIT",
