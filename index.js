@@ -30,7 +30,7 @@ const run = async () => {
       
       core.info(`Ref ${ref} has SHA of ${refResult.data.object.sha}`)
       if (refResult.data.object.sha !== sha) {
-        core.setFailed(`Ref ${ref} (sha ${refResult.data.object.sha}) does not match current code sha (${sha})`)
+        core.setFailed(`Ref ${ref} does not match current code SHA`)
         return
       }
     }

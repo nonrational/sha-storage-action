@@ -11,5 +11,5 @@ jobs:
       - id: last-run
         uses: bmuller/sha-storage-action@master
         with:
-          must-match-ref: heads/master
+          must-match-ref: heads/masterr
           token: ${{ secrets.GITHUB_TOKEN }}
