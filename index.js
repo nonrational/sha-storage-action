@@ -23,15 +23,14 @@ const run = async () => {
       
       const octokit = github.getOctokit(token)
       const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
-      if (!refResult) {
+      if (refResult?.status !== 200) {
         core.setFailed(`Could not fetch ref ${ref}`)
         return
       }
-      console.log(refResult)
-      core.info(JSON.stringify(refResult))
-      core.info(`Ref ${ref} has SHA of ${refResult.object.sha}`)
-      if (refResult.object.sha !== sha) {
-        core.setFailed(`Ref ${ref} (sha ${refResult.object.sha}) does not match current code sha (${sha})`)
+      
+      core.info(`Ref ${ref} has SHA of ${refResult.data.object.sha}`)
+      if (refResult.data.object.sha !== sha) {
+        core.setFailed(`Ref ${ref} (sha ${refResult.data.object.sha}) does not match current code sha (${sha})`)
         return
       }
     }
