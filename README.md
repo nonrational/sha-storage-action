@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: last-run
-        uses: bmuller/sha-storage-action
+        uses: bmuller/sha-storage-action@master
 
       - run: make test
         if: steps.last-run.outputs.result != 'success'
 
-      - uses: bmuller/sha-storage-action
+      - uses: bmuller/sha-storage-action@master
         with:
           result: success
 ```
@@ -32,7 +32,7 @@ jobs:
       prev-result: ${{ steps.last-run.outputs.result }}
     steps:
       - id: last-run
-        uses: bmuller/sha-storage-action
+        uses: bmuller/sha-storage-action@master
 
   test:
     runs-on: ubuntu-latest
@@ -40,7 +40,23 @@ jobs:
     if: needs.fetch-prev-result.outputs.prev_result != 'success'
     steps:
       - run: make test
-      - uses: bmuller/sha-storage-action
+      - uses: bmuller/sha-storage-action@master
         with:
           result: success
+```
+
+And here's an example of how you can ensure the current checked out SHA matches a REF before checking/writing a result (to ensure you don't write a result for something that isn't the current HEAD of a branch or tag etc):
+
+```yaml
+jobs:
+  fetch-prev-result:
+    runs-on: ubuntu-latest
+    outputs:
+      prev-result: ${{ steps.last-run.outputs.result }}
+    steps:
+      - id: last-run
+        uses: bmuller/sha-storage-action@master
+        with:
+          must-match-ref: heads/main
+          token: ${{ secrets.GITHUB_TOKEN }}
 ```
