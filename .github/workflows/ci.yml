@@ -10,5 +10,5 @@ jobs:
     steps:
       - id: last-run
         uses: bmuller/sha-storage-action      
-          with:
-            must-match-ref: heads/master
+        with:
+          must-match-ref: heads/master
