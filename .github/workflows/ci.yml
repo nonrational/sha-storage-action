@@ -12,3 +12,4 @@ jobs:
         uses: bmuller/sha-storage-action@master
         with:
           must-match-ref: heads/master
+          token: ${{ secrets.GITHUB_TOKEN }}
