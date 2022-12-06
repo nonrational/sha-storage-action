@@ -9,6 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: last-run
-        uses: bmuller/sha-storage-action      
+        uses: bmuller/sha-storage-action@master
         with:
           must-match-ref: heads/master
