@@ -27,7 +27,8 @@ const run = async () => {
         core.setFailed(`Could not fetch ref ${ref}`)
         return
       }
-      core.info(refResult)
+      console.log(refResult)
+      core.info(JSON.stringify(refResult))
       core.info(`Ref ${ref} has SHA of ${refResult.object.sha}`)
       if (refResult.object.sha !== sha) {
         core.setFailed(`Ref ${ref} (sha ${refResult.object.sha}) does not match current code sha (${sha})`)
