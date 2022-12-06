@@ -22,12 +22,8 @@ const run = async () => {
       }
       
       const octokit = github.getOctokit(token)
+      // this will error out if the ref cannot be found
       const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
-      if (refResult?.status !== 200) {
-        core.setFailed(`Could not fetch ref ${ref}`)
-        return
-      }
-      
       core.info(`Ref ${ref} has SHA of ${refResult.data.object.sha}`)
       if (refResult.data.object.sha !== sha) {
         core.setFailed(`Ref ${ref} does not match current code SHA`)
