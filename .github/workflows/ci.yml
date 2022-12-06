@@ -1,0 +1,14 @@
+name: ci
+on: push
+
+env:
+  NODE_VERSION: 18.6.0
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - id: last-run
+        uses: bmuller/sha-storage-action      
+          with:
+            must-match-ref: heads/master

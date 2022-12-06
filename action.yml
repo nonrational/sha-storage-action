@@ -5,6 +5,14 @@ inputs:
     description: 'The most recent result to store'
     required: false
     default: 'unknown'
+  token:
+    description: 'Github Token for access to repo information'
+    required: false
+    default: ''
+  must-match-ref:
+    description: 'Check to make sure the current SHA matches the given ref, error if not'
+    required: false
+    default: 'any'
 outputs:
   result:
     description: 'Most recent result'

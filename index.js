@@ -6,11 +6,36 @@ const fs = require('fs')
 const RESULT_PATH = '/tmp/prev-result'
 
 const run = async () => {
+  const sha = github.context.sha
+  core.info(`Running for current SHA ${sha}`)
+  
   try {
-    let result = core.getInput('result')
-    const sha = github.context.sha
-    core.info('Fetching status from core sha ' + sha)
+    const ref = core.getInput('must-match-ref')
 
+    if (ref !== 'any') {
+      core.info(`Looking for ref ${ref}`)
+      const { owner, repo } = github.context.repo
+      const token = core.getInput('token')
+      if (token === '') {
+        core.setFailed('You must set the token input parameter with the value of ${{ secrets.GITHUB_TOKEN }}')
+        return
+      }
+      
+      const octokit = github.getOctokit(token)
+      const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
+      if (!refResult) {
+        core.setFailed(`Could not fetch ref ${ref}`)
+        return
+      }
+
+      core.info(`Ref ${ref} has SHA of ${refResult.object.sha}`)
+      if (refResult.object.sha !== sha) {
+        core.setFailed(`Ref ${ref} (sha ${refResult.object.sha}) does not match current code sha (${sha})`)
+        return
+      }
+    }
+
+    let result = core.getInput('result')
     const key = 'sha-storage-action-' + sha + '-' + Math.floor(Date.now() / 1000)
     const cacheKey = await cache.restoreCache([RESULT_PATH], key, ['sha-storage-action-' + sha])
 
