@@ -16,6 +16,7 @@ const run = async () => {
 
     if (result !== 'unknown') {
       fs.writeFileSync(RESULT_PATH, result)
+      await cache.saveCache([RESULT_PATH], key)
     } else if (fs.existsSync(RESULT_PATH)) {
       result = fs.readFileSync(RESULT_PATH)
     }
