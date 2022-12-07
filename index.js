@@ -16,7 +16,11 @@ const run = async () => {
     const token = core.getInput('token', { required: true })
     const octokit = github.getOctokit(token)
 
-    const { default_branch } = await octokit.request('GET /repos/{owner}/{repo}', { owner, repo })
+    const repoResult = await octokit.request('GET /repos/{owner}/{repo}', { owner, repo })
+    core.info(JSON.stringify(repoResult))
+
+    const default_branch = repoResult.default_branch
+
     core.info(`Using default branch '${default_branch}'`)
     const ref = `heads/${default_branch}`
     const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
