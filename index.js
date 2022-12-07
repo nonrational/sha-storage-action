@@ -17,12 +17,11 @@ const run = async () => {
     const octokit = github.getOctokit(token)
 
     const repoResult = await octokit.request('GET /repos/{owner}/{repo}', { owner, repo })
-    core.info(JSON.stringify(repoResult))
 
-    const default_branch = repoResult.default_branch
+    const defaultBranch = repoResult.data.default_branch
+    core.info(`Using default branch '${defaultBranch}'`)
 
-    core.info(`Using default branch '${default_branch}'`)
-    const ref = `heads/${default_branch}`
+    const ref = `heads/${defaultBranch}`
     const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
     if (refResult.data.object.sha !== sha) {
       core.setFailed(`Current SHA ${sha} does not match default branch SHA ${refResult.data.object.sha}`)
