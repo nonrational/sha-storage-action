@@ -52,6 +52,7 @@ const run = async () => {
         ['result', actualResult],
         ['cacheHit', fs.existsSync(RESULT_PATH)]
       ])
+      .write()
 
     process.exit(0)
 
