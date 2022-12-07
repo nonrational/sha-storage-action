@@ -26,19 +26,35 @@ const run = async () => {
     const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
     core.info(`Found '${defaultBranch}' with SHA ${refResult.data.object.sha}`)
 
-    let result = core.getInput('result')
+    const desiredResult = core.getInput('result')
     const key = 'sha-storage-action-' + sha + '-' + Math.floor(Date.now() / 1000)
     const cacheKey = await cache.restoreCache([RESULT_PATH], key, ['sha-storage-action-' + sha])
 
-    if (result !== 'unknown') {
-      fs.writeFileSync(RESULT_PATH, result)
+    let actualResult = desiredResult
+
+    // if the result is 'unknown' then we won't save it to the cache
+    if (desiredResult !== 'unknown') {
+      fs.writeFileSync(RESULT_PATH, desiredResult)
       await cache.saveCache([RESULT_PATH], key)
     } else if (fs.existsSync(RESULT_PATH)) {
-      result = fs.readFileSync(RESULT_PATH, { encoding: 'utf8' })
+      actualResult = fs.readFileSync(RESULT_PATH, { encoding: 'utf8' })
     }
 
     core.setOutput('deploySha', refResult.data.object.sha)
-    core.setOutput('result', result)
+    core.setOutput('result', actualResult)
+    core.setOutput('cacheHit', fs.existsSync(RESULT_PATH))
+
+    await core.summary
+      .addHeading('Results')
+      .addTable([
+        [{data: 'Output', header: true}, {data: 'Result', header: true}],
+        ['deploySha', refResult.data.object.sha],
+        ['result', actualResult],
+        ['cacheHit', fs.existsSync(RESULT_PATH)]
+      ])
+
+    process.exit(0)
+
   } catch(error) {
     core.setFailed(error.message)
   }
