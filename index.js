@@ -7,11 +7,10 @@ const os = require("os")
 const RESULT_PATH = '/tmp/prev-result'
 
 const setOutput = (key, value) => {
-
   // Temporary hack until core actions library catches up with github new recommendations
   const output = process.env['GITHUB_OUTPUT']
   fs.appendFileSync(output, `${key}=${value}${os.EOL}`)
-  core.info(`GITHUB_OUTPUT=${output}`)
+  core.info(fs.readFileSync(output))
 }
 
 const run = async () => {
