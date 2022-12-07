@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.restore-cache.outputs.result }}
+      deploy_sha: ${{ steps.restore-cache.outputs.deploy_sha }}
     steps:
       - id: restore-cache
         uses: nonrational/sha-storage-action@master
@@ -17,7 +18,6 @@ jobs:
       - run: echo ${{ needs.check-sha-result.result }}
       - run: echo ${{ needs.check-sha-result.outputs.result }}
       - run: echo ${{ needs.check-sha-result.outputs.deploy_sha }}
-      - run: echo ${{ needs.check-sha-result.outputs.cache_hit }}
 
   test:
     needs: check-sha-result

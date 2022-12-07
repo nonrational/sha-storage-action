@@ -16,8 +16,6 @@ outputs:
     description: 'Most recent result'
   deploy_sha:
     description: 'The current SHA of the default branch of the repo.'
-  cache_hit:
-    description: 'Did we restore from an existing cache?'
 runs:
   using: 'node16'
   main: 'index.js'

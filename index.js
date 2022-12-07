@@ -6,6 +6,7 @@ const os = require("os")
 
 const RESULT_PATH = '/tmp/prev-result'
 
+
 const run = async () => {
   const sha = github.context.sha
   core.info(`Running for current SHA ${sha}`)
@@ -22,37 +23,43 @@ const run = async () => {
     const defaultBranch = repoResult.data.default_branch
     core.info(`Using default branch '${defaultBranch}'`)
 
+    // Fetch the current SHA of the default branch
     const ref = `heads/${defaultBranch}`
     const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
     core.info(`Found '${defaultBranch}' with SHA ${refResult.data.object.sha}`)
 
+    // desiredResult will be 'unknown' if we're in restore-only mode.
     const desiredResult = core.getInput('result')
     const key = 'sha-storage-action-' + sha + '-' + Math.floor(Date.now() / 1000)
     const cacheKey = await cache.restoreCache([RESULT_PATH], key, ['sha-storage-action-' + sha])
 
     let actualResult = desiredResult
 
+    // True if we have a previous result already.
     const cacheHit = !!fs.existsSync(RESULT_PATH)
 
-    // if the result is 'unknown' then we won't save it to the cache
+    let cacheOutcome = cacheHit ? 'hit' : 'miss'
+
+    // If the result is 'unknown' then we won't save it to the cache, as we're in
+    // "restore only" mode.
     if (desiredResult !== 'unknown') {
       fs.writeFileSync(RESULT_PATH, desiredResult)
       await cache.saveCache([RESULT_PATH], key)
+      cacheOutcome = 'write'
     } else if (cacheHit) {
       actualResult = fs.readFileSync(RESULT_PATH, { encoding: 'utf8' })
     }
 
-    core.setOutput('deploy_sha', refResult.data.object.sha)
     core.setOutput('result', actualResult)
-    core.setOutput('cache_hit', cacheHit ? 'true' : 'false')
+    core.setOutput('deploy_sha', refResult.data.object.sha)
 
     await core.summary
       .addHeading('Results')
       .addTable([
         [{data: 'Output', header: true}, {data: 'Result', header: true}],
-        ['deploy_sha', refResult.data.object.sha],
         ['result', actualResult],
-        ['cache_hit', cacheHit ? 'true' : 'false']
+        ['cache_outcome', cacheOutcome],
+        ['deploy_sha', refResult.data.object.sha]
       ])
       .write()
 

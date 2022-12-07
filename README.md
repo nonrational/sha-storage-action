@@ -1,10 +1,17 @@
 # SHA Storage Action
 
-Store a result for the given SHA of a repo.
+Store a result for a given commit SHA in a repo.
 
-## Example
+## Outputs
 
-Here's a simple example where a test job will only run once for a given version of the codebase (rerunning the job won't result in `make test` running more than once, if the last run succeeded).
+|name|description|
+|-|-|
+|`result`| The string result of the action, either `'unknown'` or the given `result` value.|
+|`deploy_sha`| The current SHA of the default branch of the repo. This is useful when implementing a tag-based deployment strategy|
+
+## Examples
+
+Here's a simple example where a test step will run once for a given version of the codebase. Re-running the action for the same commit will skip `make test` if the last run was successful.
 
 ```yaml
 jobs:
@@ -22,7 +29,7 @@ jobs:
           result: success
 ```
 
-Here's an example where you may only want the "test" job to run successfully at most once:
+In this example, the entire `test` job will be skipped if it already succeeded for this commit.
 
 ```yaml
 jobs:
@@ -43,20 +50,4 @@ jobs:
       - uses: bmuller/sha-storage-action@master
         with:
           result: success
-```
-
-And here's an example of how you can ensure the current checked out SHA matches a REF before checking/writing a result (to ensure you don't write a result for something that isn't the current HEAD of a branch or tag etc):
-
-```yaml
-jobs:
-  fetch-prev-result:
-    runs-on: ubuntu-latest
-    outputs:
-      prev-result: ${{ steps.last-run.outputs.result }}
-    steps:
-      - id: last-run
-        uses: bmuller/sha-storage-action@master
-        with:
-          must-match-ref: heads/main
-          token: ${{ secrets.GITHUB_TOKEN }}
 ```
