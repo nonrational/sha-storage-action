@@ -4,11 +4,11 @@ on: push
 jobs:
   check-sha-result:
     runs-on: ubuntu-latest
+    output:
+      result: ${{ steps.restore-cache.outputs.result }}
     steps:
-      - id: last-run
+      - id: restore-cache
         uses: nonrational/sha-storage-action@master
-        with:
-          result: success
 
   check:
     needs: check-sha-result
@@ -18,3 +18,11 @@ jobs:
       - run: echo ${{ toJSON(needs.check-sha-result.outputs) }}
       # - run: echo ${{ needs.check-sha-result.outputs.result }}
       # - run: echo ${{ needs.check-sha-result.outputs.deploySha }}
+
+  test:
+    needs: check-sha-result
+    runs-on: ubuntu-latest
+    steps:
+      - uses: nonrational/sha-storage-action@master
+        with:
+          result: success

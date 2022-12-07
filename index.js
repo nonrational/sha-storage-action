@@ -40,9 +40,11 @@ const run = async () => {
       actualResult = fs.readFileSync(RESULT_PATH, { encoding: 'utf8' })
     }
 
+    const cacheHit = fs.existsSync(RESULT_PATH) ? 'true' : 'false'
+
     core.setOutput('deploySha', refResult.data.object.sha)
     core.setOutput('result', actualResult)
-    core.setOutput('cacheHit', fs.existsSync(RESULT_PATH))
+    core.setOutput('cacheHit', cacheHit)
 
     await core.summary
       .addHeading('Results')
@@ -50,7 +52,7 @@ const run = async () => {
         [{data: 'Output', header: true}, {data: 'Result', header: true}],
         ['deploySha', refResult.data.object.sha],
         ['result', actualResult],
-        ['cacheHit', fs.existsSync(RESULT_PATH)]
+        ['cacheHit', cacheHit]
       ])
       .write()
 
