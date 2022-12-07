@@ -32,19 +32,19 @@ const run = async () => {
 
     let actualResult = desiredResult
 
+    const cacheHit = fs.existsSync(RESULT_PATH)
+
     // if the result is 'unknown' then we won't save it to the cache
     if (desiredResult !== 'unknown') {
       fs.writeFileSync(RESULT_PATH, desiredResult)
       await cache.saveCache([RESULT_PATH], key)
-    } else if (fs.existsSync(RESULT_PATH)) {
+    } else if (cacheHit) {
       actualResult = fs.readFileSync(RESULT_PATH, { encoding: 'utf8' })
     }
 
-    const cacheHit = fs.existsSync(RESULT_PATH) ? 'true' : 'false'
-
     core.setOutput('deploySha', refResult.data.object.sha)
     core.setOutput('result', actualResult)
-    core.setOutput('cacheHit', cacheHit)
+    core.setOutput('cacheHit', cache ? 'true' : 'false')
 
     await core.summary
       .addHeading('Results')
@@ -52,7 +52,7 @@ const run = async () => {
         [{data: 'Output', header: true}, {data: 'Result', header: true}],
         ['deploySha', refResult.data.object.sha],
         ['result', actualResult],
-        ['cacheHit', cacheHit]
+        ['cacheHit', cache ? 'true' : 'false']
       ])
       .write()
 
