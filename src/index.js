@@ -28,22 +28,21 @@ const run = async () => {
     const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
     core.info(`Found '${defaultBranch}' with SHA ${refResult.data.object.sha}`)
 
-    // desiredResult will be 'unknown' if we're in restore-only mode.
-    const desiredResult = core.getInput('result')
+    // inputResult will be 'unknown' if we're in "restore only" mode.
+    const inputResult = core.getInput('result')
     const key = 'sha-storage-action-' + sha + '-' + Math.floor(Date.now() / 1000)
     const cacheKey = await cache.restoreCache([RESULT_PATH], key, ['sha-storage-action-' + sha])
 
-    let actualResult = desiredResult
+    let actualResult = inputResult
 
     // True if we have a previous result already.
     const cacheHit = !!fs.existsSync(RESULT_PATH)
 
     let cacheOutcome = cacheHit ? 'hit' : 'miss'
 
-    // If the result is 'unknown' then we won't save it to the cache, as we're in
-    // "restore only" mode.
-    if (desiredResult !== 'unknown') {
-      fs.writeFileSync(RESULT_PATH, desiredResult)
+    // If the result is 'unknown' then we won't save it to the cache; we're in "restore only" mode.
+    if (inputResult !== 'unknown') {
+      fs.writeFileSync(RESULT_PATH, inputResult)
       await cache.saveCache([RESULT_PATH], key)
       cacheOutcome = 'write'
     } else if (cacheHit) {
