@@ -10,25 +10,21 @@ const run = async () => {
   core.info(`Running for current SHA ${sha}`)
   
   try {
-    const ref = core.getInput('must-match-ref')
+    const { owner, repo } = github.context.repo
 
-    if (ref !== 'any') {
-      core.info(`Looking for ref ${ref}`)
-      const { owner, repo } = github.context.repo
-      const token = core.getInput('token')
-      if (token === '') {
-        core.setFailed('You must set the token input parameter with the value of ${{ secrets.GITHUB_TOKEN }}')
-        return
-      }
-      
-      const octokit = github.getOctokit(token)
-      // this will error out if the ref cannot be found
-      const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
-      core.info(`Ref ${ref} has SHA of ${refResult.data.object.sha}`)
-      if (refResult.data.object.sha !== sha) {
-        core.setFailed(`Ref ${ref} does not match current code SHA`)
-        return
-      }
+
+    const token = core.getInput('github_token', { required: true })
+    const octokit = github.getOctokit(token)
+
+    const defaultBranchRef = 'master'
+    core.info(JSON.stringify(repo))
+
+    // this will error out if the ref cannot be found
+    const refResult = await octokit.rest.git.getRef({ owner, repo, defaultBranchRef })
+
+    if (refResult.data.object.sha !== sha) {
+      core.setFailed(`Current SHA ${sha} does not match default branch SHA ${refResult.data.object.sha}`)
+      return
     }
 
     let result = core.getInput('result')
