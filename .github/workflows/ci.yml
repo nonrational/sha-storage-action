@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: last-run
-        uses: bmuller/sha-storage-action@master
+        uses: nonrational/sha-storage-action@master
         with:
-          must-match-ref: heads/master
-          token: ${{ secrets.GITHUB_TOKEN }}
           result: success
