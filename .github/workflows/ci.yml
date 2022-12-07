@@ -14,5 +14,6 @@ jobs:
     needs: check-sha-result
     runs-on: ubuntu-latest
     steps:
+      - run: echo ${{ needs.check-sha-result.result }}
       - run: echo ${{ needs.check-sha-result.outputs.result }}
       - run: echo ${{ needs.check-sha-result.outputs.default-branch-sha }}
