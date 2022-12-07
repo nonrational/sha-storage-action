@@ -54,7 +54,6 @@ const run = async () => {
     core.setOutput('deploy_sha', refResult.data.object.sha)
 
     await core.summary
-      .addHeading('Results')
       .addTable([
         [{data: 'Output', header: true}, {data: 'Result', header: true}],
         ['result', actualResult],
