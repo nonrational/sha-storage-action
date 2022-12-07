@@ -15,9 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo ${{ needs.check-sha-result.result }}
-      - run: echo ${{ toJSON(needs.check-sha-result.outputs) }}
-      # - run: echo ${{ needs.check-sha-result.outputs.result }}
-      # - run: echo ${{ needs.check-sha-result.outputs.deploySha }}
+      - run: echo ${{ needs.check-sha-result.outputs.result }}
+      - run: echo ${{ needs.check-sha-result.outputs.deploySha }}
 
   test:
     needs: check-sha-result
