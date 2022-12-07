@@ -10,23 +10,21 @@ const run = async () => {
   core.info(`Running for current SHA ${sha}`)
   
   try {
+    // These are the string names of the owner and repo
     const { owner, repo } = github.context.repo
 
-    const defaultBranchRef = 'heads/master'
     const token = core.getInput('token', { required: true })
     const octokit = github.getOctokit(token)
 
+    // Get the repo object, which contains the `default_branch` property.
     const repoResult = await octokit.request('GET /repos/{owner}/{repo}', { owner, repo })
-
     const defaultBranch = repoResult.data.default_branch
     core.info(`Using default branch '${defaultBranch}'`)
 
     const ref = `heads/${defaultBranch}`
     const refResult = await octokit.rest.git.getRef({ owner, repo, ref })
-    if (refResult.data.object.sha !== sha) {
-      core.setFailed(`Current SHA ${sha} does not match default branch SHA ${refResult.data.object.sha}`)
-      return
-    }
+    core.info(`Found '${defaultBranch}' with SHA ${refResult.data.object.sha}`)
+    core.setOutput('default-branch-sha', refResult.data.object.sha)
 
     let result = core.getInput('result')
     const key = 'sha-storage-action-' + sha + '-' + Math.floor(Date.now() / 1000)
