@@ -13,7 +13,7 @@ const run = async () => {
     const { owner, repo } = github.context.repo
 
     const defaultBranchRef = 'master'
-    core.info(JSON.stringify(repo))
+    core.info(JSON.stringify(github.context.repo))
 
     const token = core.getInput('token') ?? github.token
     const octokit = github.getOctokit(token)
