@@ -12,14 +12,11 @@ const run = async () => {
   try {
     const { owner, repo } = github.context.repo
 
-
-    const token = core.getInput('github_token', { required: true })
-    const octokit = github.getOctokit(token)
-
     const defaultBranchRef = 'master'
     core.info(JSON.stringify(repo))
 
-    // this will error out if the ref cannot be found
+    const token = core.getInput('token') ?? github.token
+    const octokit = github.getOctokit(token)
     const refResult = await octokit.rest.git.getRef({ owner, repo, defaultBranchRef })
 
     if (refResult.data.object.sha !== sha) {
