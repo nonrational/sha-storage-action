@@ -42,17 +42,17 @@ const run = async () => {
       actualResult = fs.readFileSync(RESULT_PATH, { encoding: 'utf8' })
     }
 
-    core.setOutput('deploySha', refResult.data.object.sha)
+    core.setOutput('deploy_sha', refResult.data.object.sha)
     core.setOutput('result', actualResult)
-    core.setOutput('cacheHit', cacheHit)
+    core.setOutput('cache_hit', cacheHit ? 'true' : 'false')
 
     await core.summary
       .addHeading('Results')
       .addTable([
         [{data: 'Output', header: true}, {data: 'Result', header: true}],
-        ['deploySha', refResult.data.object.sha],
+        ['deploy_sha', refResult.data.object.sha],
         ['result', actualResult],
-        ['cacheHit', cacheHit]
+        ['cache_hit', cacheHit ? 'true' : 'false']
       ])
       .write()
 
