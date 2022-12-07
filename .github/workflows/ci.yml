@@ -2,10 +2,17 @@ name: ci
 on: push
 
 jobs:
-  test:
+  check-sha-result:
     runs-on: ubuntu-latest
     steps:
       - id: last-run
         uses: nonrational/sha-storage-action@master
         with:
           result: success
+
+  check:
+    needs: check-sha-result
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ needs.check-sha-result.outputs.result }}
+      - run: echo ${{ needs.check-sha-result.outputs.default-branch-sha }}
