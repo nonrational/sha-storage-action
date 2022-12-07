@@ -4,7 +4,7 @@ on: push
 jobs:
   check-sha-result:
     runs-on: ubuntu-latest
-    output:
+    outputs:
       result: ${{ steps.restore-cache.outputs.result }}
     steps:
       - id: restore-cache
