@@ -6,13 +6,11 @@ inputs:
     required: false
     default: 'unknown'
   token:
-    description: 'Github Token for access to repo information'
-    required: false
-    default: ''
-  must-match-ref:
-    description: 'Check to make sure the current SHA matches the given ref, error if not'
-    required: false
-    default: 'any'
+    description: >
+      GitHub token for GitHub API requests.
+      When `repository` is modified, set to a personal access token with access to `repository`.
+    required: true
+    default: ${{ github.token }}
 outputs:
   result:
     description: 'Most recent result'
