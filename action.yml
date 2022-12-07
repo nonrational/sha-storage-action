@@ -3,7 +3,7 @@ description: 'Github Action for storing results from previous runs by SHA'
 inputs:
   result:
     description: 'The most recent result to store'
-    required: false
+    required: true
     default: 'unknown'
   token:
     description: >
