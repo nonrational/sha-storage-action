@@ -11,8 +11,9 @@ const run = async () => {
   
   try {
     const { owner, repo } = github.context.repo
+    core.info(JSON.stringify(github.context.repo))
 
-    const defaultBranchRef = 'master'
+    const defaultBranchRef = 'heads/master'
     const token = core.getInput('token', { required: true })
     const octokit = github.getOctokit(token)
     const refResult = await octokit.rest.git.getRef({ owner, repo, defaultBranchRef })
